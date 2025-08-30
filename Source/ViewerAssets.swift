@@ -5,14 +5,9 @@ class ViewerAssets {
 }
 
 extension UIImage {
-    static var darkCircle = UIImage(name: "dark-circle")
-    static var pause = UIImage(name: "pause")
-    static var play = UIImage(name: "play")
-    static var `repeat` = UIImage(name: "repeat")
-    static var seek = UIImage(name: "seek")
-    public static var close = UIImage(name: "close")
-
-    convenience init(name: String) {
-        self.init(named: name, in: ViewerAssets.bundle, compatibleWith: nil)!
-    }
+    static var pause = UIImage(systemName: "pause")!
+    static var play = UIImage(systemName: "play")!
+    static var `repeat` = UIImage(systemName: "repeat")!
+    static var seek = UIImage(systemName: "forward")!
+    static var close = UIImage(systemName: "xmark.circle")!
 }
