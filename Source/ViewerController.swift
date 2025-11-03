@@ -196,7 +196,7 @@ public class ViewerController: UIViewController {
         let recognizer = UILongPressGestureRecognizer(target: self, action: #selector(longPress(gesture:)))
         self.view.addGestureRecognizer(recognizer)
     }
-
+    
     #if os(tvOS)
     @objc func menu(gesture: UITapGestureRecognizer) {
         guard gesture.state == .ended else { return }
@@ -271,7 +271,14 @@ public class ViewerController: UIViewController {
 
         self.present(with: self.initialIndexPath, completion: nil)
     }
-
+    
+    public override func willMove(toParent parent: UIViewController?) {
+        super.willMove(toParent: parent)
+        if parent == nil && isBeingPresented == false {
+            self.dismiss(nil)
+        }
+    }
+    
     public func reload(at indexPath: IndexPath) {
         let viewableController = self.findOrCreateViewableController(indexPath)
         viewableController.display()
@@ -359,7 +366,7 @@ extension ViewerController {
         self.view.addSubview(self.overlayView)
         self.view.addSubview(presentedView)
 
-        if self.headerView == nil {
+        if self.headerView == nil && isBeingPresented {
             self.headerView = defaultHeaderView
         }
 
