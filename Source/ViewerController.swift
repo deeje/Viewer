@@ -154,7 +154,9 @@ public class ViewerController: UIViewController {
 
         return view
     }()
-
+    
+    private var dismissLevel = 0
+    
     // MARK: View Lifecycle
 
     public override func viewDidLoad() {
@@ -438,8 +440,12 @@ extension ViewerController {
         let controller = self.findOrCreateViewableController(self.currentIndexPath)
         self.dismiss(controller, completion: completion)
     }
-
+    
     private func dismiss(_ viewableController: ViewableController, completion: (() -> Void)?) {
+        dismissLevel += 1
+        
+        if dismissLevel > 1 { return }
+        
         if self.isSlideshow {
             self.slideshowView.stop()
 
@@ -479,7 +485,7 @@ extension ViewerController {
         window.addSubview(self.overlayView)
         window.addSubview(presentedView)
         self.shouldUseLightStatusBar = false
-
+        
         UIView.animate(withDuration: 0.30, animations: {
             self.presentingViewController?.tabBarController?.tabBar.alpha = 1
             self.overlayView.alpha = 0.0
@@ -487,6 +493,8 @@ extension ViewerController {
                 self.setNeedsStatusBarAppearanceUpdate()
             #endif
             presentedView.frame = self.view.convert(selectedCellFrame, from: self.collectionView)
+            
+            self.delegate?.viewerControllerDidDismiss(self)
         }, completion: { _ in
             if let existingCell = self.collectionView.cellForItem(at: indexPath) {
                 existingCell.alpha = 1
@@ -497,14 +505,9 @@ extension ViewerController {
             presentedView.removeFromSuperview()
             self.overlayView.removeFromSuperview()
             self.dismiss(animated: false, completion: nil)
-
-            // A small delay is required to avoid racing conditions between the dismissing animation and the
-            // state change after the animation is completed.
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                self.isPresented = false
-                self.delegate?.viewerControllerDidDismiss(self)
-                completion?()
-            }
+            
+            self.isPresented = false
+            completion?()
         })
     }
 
