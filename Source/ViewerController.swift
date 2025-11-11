@@ -608,6 +608,8 @@ extension ViewerController: ViewableControllerDelegate {
         self.shouldHideStatusBar = !self.shouldHideStatusBar
         self.buttonsAreVisible = !self.buttonsAreVisible
         self.toggleButtons(self.buttonsAreVisible)
+        
+        navigationController?.setNavigationBarHidden(!self.buttonsAreVisible, animated: true)
     }
 
     func viewableController(_: ViewableController, didFailDisplayingVieweableWith error: NSError) {
