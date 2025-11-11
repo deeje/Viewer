@@ -63,6 +63,7 @@ class ViewableController: UIViewController {
     
     lazy var videoView: VideoView = {
         let view = VideoView()
+        view.parentController = self
         view.delegate = self
 
         return view
